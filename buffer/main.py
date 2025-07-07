@@ -1,23 +1,31 @@
 import os, sys
 import numpy as np
 import ctypes
-from glfw import *
+import glfw
+import pygame as pg
+from glfw.GLFW import *
 from OpenGL.GL import *
-import os
 
 class Program():
     def __init__(self):
-        pg.init()
-        pg.display.gl_set_attribute(pg.GL_CONTEXT_MAJOR_VERSION, 4)
-        pg.display.gl_set_attribute(pg.GL_CONTEXT_MINOR_VERSION, 1)
-        pg.display.gl_set_attribute(pg.GL_CONTEXT_PROFILE_MASK, pg.GL_CONTEXT_PROFILE_CORE)
-        pg.display.gl_set_attribute(pg.GL_CONTEXT_FORWARD_COMPATIBLE_FLAG, True)
-        self.surface = pg.display.set_mode([1280, 720], pg.OPENGL | pg.DOUBLEBUF, vsync = 1)
-        pg.display.set_caption('buffer test')
-        self.clock = pg.time.Clock()
+        glfw.init()
+        glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 4)
+        glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 1)
+        glfw.window_hint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
+        glfw.window_hint(glfw.OPENGL_FORWARD_COMPAT, True)
+        self.monitor = glfwGetPrimaryMonitor()
+        self.window = glfwCreateWindow(1280, 720, 'buffer test', self.monitor, None)
+        glfwSetWindowMonitor(self.window, self.monitor, 0, 0, 1280, 720, 60)
+        glfwSetKeyCallback(self.window, self.key_callback)
         self.gl_init()
 
     def gl_init(self):
+        if 'WAYLAND_DISPLAY' in os.environ:
+            print("Running on Wayland.")
+        elif 'DISPLAY' in os.environ:
+            print("Running on X11.")
+        else:
+            print("Could not determine display server (possibly TTY).")
         f = open('vertex.glsl')
         self.v_shader_source = f.read()
         f.close()
@@ -42,7 +50,6 @@ class Program():
 
         self.location = {}
         self.location['a_position'] = glGetAttribLocation(self.program, 'a_position')
-        print(self.location)
 
         self.vao = 1
         glGenVertexArrays(1, self.vao)
@@ -51,18 +58,11 @@ class Program():
         glBindVertexArray(self.vao)
         glBindBuffer(GL_ARRAY_BUFFER, self.buffer)
         glBufferData(GL_ARRAY_BUFFER, 4 * 9, np.array([0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0], dtype = np.float32), GL_STATIC_DRAW)
-        print(glGetError())
         glVertexAttribPointer(self.location['a_position'], 3, GL_FLOAT, GL_FALSE, 3 * 4, ctypes.c_void_p(0 * 4))
         glEnableVertexAttribArray(self.location['a_position'])
 
     def run(self):
-        while True:
-            for event in pg.event.get():
-                if event.type == pg.QUIT:
-                    pg.quit()
-                    sys.exit()
-
-            self.clock.tick(60)
+        while not glfw.window_should_close(window):
             glClearColor(1.0, 1.0, 1.0, 1.0)
             glClear(GL_COLOR_BUFFER_BIT)
             glUseProgram(self.program)
@@ -70,7 +70,14 @@ class Program():
             glBindVertexArray(self.vao)
             glBindBuffer(GL_ARRAY_BUFFER, self.buffer)
             glDrawArrays(GL_TRIANGLES, 0, 3)
-            pg.display.flip()
+            glfwSwapBuffers(self.window)
+            glfw.poll_events()
+        glfw.terminate()
+
+    def key_callback(window, key, scancode, action, mods):
+        print(f"key: {key} action: {action}")
+        if key==GLFW_KEY_ESCAPE and action==GLFW_PRESS:
+            glfwSetWindowShouldClose(window, GLFW_TRUE)
 
 if __name__ == '__main__':
     Program().run()
