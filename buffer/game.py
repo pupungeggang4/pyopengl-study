@@ -12,6 +12,7 @@ class Program():
         pg.display.gl_set_attribute(pg.GL_CONTEXT_MAJOR_VERSION, 4)
         pg.display.gl_set_attribute(pg.GL_CONTEXT_MINOR_VERSION, 1)
         pg.display.gl_set_attribute(pg.GL_CONTEXT_PROFILE_MASK, pg.GL_CONTEXT_PROFILE_CORE)
+        pg.display.gl_set_attribute(pg.GL_CONTEXT_FORWARD_COMPATIBLE_FLAG, True)
         self.surface = pg.display.set_mode([1280, 720], pg.OPENGL | pg.DOUBLEBUF, vsync = 1)
         pg.display.set_caption('buffer test')
         self.clock = pg.time.Clock()
