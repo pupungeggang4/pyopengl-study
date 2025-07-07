@@ -43,9 +43,9 @@ class Program():
         self.location['a_position'] = glGetAttribLocation(self.program, 'a_position')
         print(self.location)
 
-        self.vao = 0
+        self.vao = 1
         glGenVertexArrays(1, self.vao)
-        self.buffer = 0
+        self.buffer = 1
         glGenBuffers(1, self.buffer)
         glBindVertexArray(self.vao)
         glBindBuffer(GL_ARRAY_BUFFER, self.buffer)
@@ -60,14 +60,14 @@ class Program():
                     pg.quit()
                     sys.exit()
 
-                self.clock.tick(60)
-                glClearColor(1.0, 1.0, 1.0, 1.0)
-                glClear(GL_COLOR_BUFFER_BIT)
-                glUseProgram(self.program)
-                glEnableVertexAttribArray(self.location['a_position'])
-                glBindVertexArray(self.vao)
-                glBindBuffer(GL_ARRAY_BUFFER, self.buffer)
-                glDrawArrays(GL_TRIANGLES, 0, 3)
+            self.clock.tick(60)
+            glClearColor(1.0, 1.0, 1.0, 1.0)
+            glClear(GL_COLOR_BUFFER_BIT)
+            glUseProgram(self.program)
+            glEnableVertexAttribArray(self.location['a_position'])
+            glBindVertexArray(self.vao)
+            glBindBuffer(GL_ARRAY_BUFFER, self.buffer)
+            glDrawArrays(GL_TRIANGLES, 0, 3)
 
 if __name__ == '__main__':
     Program().run()
