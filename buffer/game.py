@@ -68,6 +68,7 @@ class Program():
             glBindVertexArray(self.vao)
             glBindBuffer(GL_ARRAY_BUFFER, self.buffer)
             glDrawArrays(GL_TRIANGLES, 0, 3)
+            pg.display.flip()
 
 if __name__ == '__main__':
     Program().run()
