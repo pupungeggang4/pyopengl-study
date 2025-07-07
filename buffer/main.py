@@ -13,10 +13,9 @@ class Program():
         glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 1)
         glfw.window_hint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
         glfw.window_hint(glfw.OPENGL_FORWARD_COMPAT, True)
-        self.monitor = glfwGetPrimaryMonitor()
-        self.window = glfwCreateWindow(1280, 720, 'buffer test', self.monitor, None)
-        glfwSetWindowMonitor(self.window, self.monitor, 0, 0, 1280, 720, 60)
+        self.window = glfwCreateWindow(1280, 720, 'buffer test', None, None)
         glfwSetKeyCallback(self.window, self.key_callback)
+        self.context = glfw.make_context_current(self.window)
         self.gl_init()
 
     def gl_init(self):
@@ -62,7 +61,7 @@ class Program():
         glEnableVertexAttribArray(self.location['a_position'])
 
     def run(self):
-        while not glfw.window_should_close(window):
+        while not glfw.window_should_close(self.window):
             glClearColor(1.0, 1.0, 1.0, 1.0)
             glClear(GL_COLOR_BUFFER_BIT)
             glUseProgram(self.program)
@@ -74,10 +73,10 @@ class Program():
             glfw.poll_events()
         glfw.terminate()
 
-    def key_callback(window, key, scancode, action, mods):
+    def key_callback(self, window, key, scancode, action, mods):
         print(f"key: {key} action: {action}")
         if key==GLFW_KEY_ESCAPE and action==GLFW_PRESS:
-            glfwSetWindowShouldClose(window, GLFW_TRUE)
+            glfwSetWindowShouldClose(self.window, GLFW_TRUE)
 
 if __name__ == '__main__':
     Program().run()
