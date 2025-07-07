@@ -1,7 +1,7 @@
 import os, sys
 import numpy as np
 import ctypes
-import pygame as pg
+from glfw import *
 from OpenGL.GL import *
 import os
 
