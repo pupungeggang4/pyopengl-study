@@ -17,8 +17,6 @@ class Program():
         self.gl_init()
 
     def gl_init(self):
-        if sys.platform.startswith('linux'):
-            os.environ['PYOPENGL_PLATFORM'] = 'x11'
         f = open('vertex.glsl')
         self.v_shader_source = f.read()
         f.close()
